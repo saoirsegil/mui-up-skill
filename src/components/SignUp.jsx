@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 
 import EggOutlinedIcon from "@mui/icons-material/EggOutlined";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 import BG from "../asset/BG.jpg";
 import {
@@ -105,8 +105,8 @@ const SignUp = () => {
       <Paper elevation={10} style={paperStyle}>
         <form onSubmit={handleSubmit}>
           <Box display="flex">
-            <ArrowBackIcon
-              cursor="pointer"
+            <ArrowBackIosIcon
+              sx={{ cursor: "pointer", color: "gray" }}
               onClick={() => navigate("/sign-in")}
             />
           </Box>

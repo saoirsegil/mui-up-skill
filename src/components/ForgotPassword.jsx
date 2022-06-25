@@ -20,10 +20,12 @@ import { UserContext } from "../context/UserContext";
 
 import {
   signInWithGooglePopup,
-  signInWithFacebookPopup,
   createUserDocumentFromAuth,
-  signInAuthUserhWithEmailAndPassword,
+  sendAuthPasswordResetEmail,
+  signInWithFacebookPopup,
 } from "../utils/Firebase.utils";
+
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 const image = {
   boxContainer: {
@@ -54,12 +56,11 @@ const buttonStyle = {
 
 const defaultFormFields = {
   email: "",
-  password: "",
 };
 
-const SignIn = () => {
+const ForgotPassword = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
-  const { email, password } = formFields;
+  const { email } = formFields;
 
   const { setCurrentUser } = useContext(UserContext);
 
@@ -73,7 +74,7 @@ const SignIn = () => {
   };
 
   const logFacebookUser = async () => {
-    const { user } = await signInWithFacebookPopup();
+    const { user } = signInWithFacebookPopup();
     await createUserDocumentFromAuth(user);
   };
 
@@ -83,84 +84,48 @@ const SignIn = () => {
     event.preventDefault();
 
     try {
-      const { user } = await signInAuthUserhWithEmailAndPassword(
-        email,
-        password
-      );
+      const { user } = await sendAuthPasswordResetEmail(email);
 
       setCurrentUser(user);
       resetFormFields();
-    } catch (error) {
-      switch (error.code) {
-        case "auth/wrong-password":
-          alert("incorrect password for email");
-          break;
-        case "auth/user-not-found":
-          alert("no user associated with this email");
-          break;
-        case "auth/invalid-email":
-          alert("incorrect email");
-          break;
-        default:
-          console.log(error);
-      }
-      if (error.code === "auth/wrong-password")
-        alert("incorrect password for email");
-    }
+    } catch (error) {}
   };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormFields({ ...formFields, [name]: value });
+    setFormFields({ [name]: value });
   };
 
   return (
     <Box style={image.boxContainer} padding="50px">
       <Paper elevation={10} style={paperStyle}>
         <form onSubmit={handleSubmit}>
+          <Box display="flex">
+            <ArrowBackIosIcon
+              sx={{ cursor: "pointer", color: "gray" }}
+              onClick={() => navigate("/sign-in")}
+            />
+          </Box>
           <Box>
             <Grid align="center">
               <Avatar style={avatarStyle}>
                 <EggOutlinedIcon />
               </Avatar>
               <Typography variant="h4" component="h1" fontWeight="bold">
-                Welcome back!
+                Forgot Password
               </Typography>
             </Grid>
           </Box>
-          <Box margin="20px auto">
+          <Box mt={5}>
             <TextField
               onChange={handleChange}
               name="email"
               value={email}
               variant="standard"
-              label="Username"
+              label="Enter Your Email"
               fullWidth
               required
             />
-          </Box>
-          <Box>
-            <TextField
-              onChange={handleChange}
-              name="password"
-              value={password}
-              variant="standard"
-              label="Password"
-              type="password"
-              fullWidth
-              required
-            />
-          </Box>
-          <Box display="flex" justifyContent="flex-end" margin="8px 0">
-            <Typography
-              fontSize={14}
-              variant="p"
-              component="span"
-              sx={{ cursor: "pointer", color: "gray" }}
-              onClick={() => navigate("/forgot-password")}
-            >
-              Forgot password?
-            </Typography>
           </Box>
           <Box sx={{ margin: "1rem 0" }}>
             <Button
@@ -171,7 +136,7 @@ const SignIn = () => {
               fullWidth
             >
               <Typography variant="h6" component="h1">
-                Sign in
+                Send
               </Typography>
             </Button>
           </Box>
@@ -241,4 +206,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default ForgotPassword;
